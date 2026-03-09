@@ -8,6 +8,7 @@
     "dev": "vite",
     "prepare": "husky",
     "build": "vite build",
+    "start": "cd server  && npm start",
     "db:grunnskoler:download": "download --out tmp extract Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip",
     "db:grunnskoler:load": "npm run psql:docker < tmp/Befolkning_0000_Norge_25833_Grunnskoler_PostGIS.zip"
   },
