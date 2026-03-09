@@ -1,12 +1,29 @@
 import { Hono } from "hono";
 import { serve } from "@hono/node-server";
+import pg from "pg";
+
+const postgres = new pg.Pool({
+  user: "postgres",
+});
 
 const app = new Hono();
 app.get("/", (c) => c.text("Hello World"));
-app.get("/api/grunnskoler", (c) =>
+app.get("/api/grunnskoler", async (c) => {
+  const result = await postgres.query(`
+    select skolenavn, antallelever, st_transform(posisjon, 4326)::json posisjon
+    from grunnskoler_519889439f4c490fab3f1830377a702.grunnskole
+  `);
   c.json({
     type: "FeatureCollection",
-  }),
-);
+    features: result.rows.map(({ skolenavn, antallelever, posisjon }) => ({
+      type: "Feature",
+      properties: {
+        skolenavn,
+        antallelever,
+      },
+      geometry: posisjon,
+    })),
+  });
+});
 
 serve(app);
